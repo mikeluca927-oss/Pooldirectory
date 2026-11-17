@@ -68,6 +68,8 @@ select,input[type=search],textarea{font:500 14px var(--body);letter-spacing:0;te
 select:hover,input[type=search]:hover{border-color:var(--accent)}
 input[type=search]{width:100%}
 .filters label.grow{flex:1 1 150px}
+.ftog,.close{display:none}
+.srch{order:5}
 .check{flex-direction:row!important;align-items:center;gap:7px!important;padding-bottom:9px;color:var(--ink)!important}
 .check input{accent-color:var(--accent);width:16px;height:16px}
 button.act{font:700 15px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:10px 16px;cursor:pointer;margin-left:auto}
@@ -144,9 +146,64 @@ textarea{width:100%;min-height:64px;resize:vertical}
 .note b{color:var(--ink)}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
 #toast.show{opacity:1}
-@media (max-width:1020px){.main{grid-template-columns:1fr}aside{position:static}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.src{text-align:left}}
-@media (max-width:520px){.hero{padding:26px 16px 80px}.wrap{padding:0 16px}.tile{flex-direction:column;gap:4px}.tile b{font-size:40px}button.act{margin-left:0;width:100%}input[type=search]{width:100%}.filters label{flex:1 1 44%}}
-@media (prefers-reduced-motion:reduce){.hero::before{animation:none}.tile,tbody tr,#toast{transition:none}}
+@media (max-width:1020px){
+  .main{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.src{text-align:left}
+  /* detail becomes a bottom sheet */
+  aside{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:680px;margin:0 auto;max-height:90vh;max-height:90dvh;overflow-y:auto;overscroll-behavior:contain;border-radius:18px 18px 0 0;border-bottom:0;z-index:20;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+  aside.open{transform:none;visibility:visible}
+  .dh{position:sticky;top:0;z-index:2;padding-right:64px}
+  .dh::before{content:"";position:absolute;top:7px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(255,255,255,.5);z-index:1}
+  .close{display:grid;place-items:center;position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:var(--on-water);font:600 26px/1 var(--body);cursor:pointer;z-index:2}
+  .db{padding-bottom:28px}
+  .scrim{position:fixed;inset:0;background:rgba(4,24,34,.5);opacity:0;pointer-events:none;transition:opacity .25s;z-index:19}
+  body.sheet .scrim{opacity:1;pointer-events:auto}
+  body.sheet{overflow:hidden}
+}
+@media (max-width:760px){
+  body{font-size:16px}
+  .hero{padding:22px 16px 64px}
+  .eyebrow{font-size:12px;letter-spacing:.12em}
+  h1{font-size:46px}
+  .sub{font-size:15px;margin-top:10px}
+  .src{font-size:12px}
+  .wrap{padding:0 12px;gap:14px}
+  .tiles{gap:8px;margin-top:-46px}
+  .tile{flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-width:1.5px}
+  .tile b{font-size:34px}
+  .tile span{font-size:12px;letter-spacing:.05em}
+  /* filters: sticky search bar, rest behind a toggle */
+  .filters{position:sticky;top:0;z-index:6;padding:10px;gap:10px;border-radius:12px}
+  .srch{order:-2;flex:1 1 0!important;font-size:0!important;gap:0!important}
+  .ftog{order:-1;display:block;font:700 15px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--panel);border:0;border-radius:8px;padding:0 14px;min-height:44px;cursor:pointer;white-space:nowrap}
+  .fx{display:none!important}
+  .filters.open .fx{display:flex!important}
+  .filters.open label.fx:not(.check){flex:1 1 calc(50% - 5px)}
+  .filters.open .check{flex:1 1 100%;padding:4px 0}
+  .filters.open button.act{width:100%;margin:0;min-height:44px}
+  select,input[type=search],textarea{font-size:16px;min-height:44px}
+  canvas{height:230px}
+  .maphead{padding:12px 12px 0}
+  /* table becomes a stack of cards */
+  table,tbody{display:block}
+  thead{display:none}
+  tbody tr{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:14px;border-bottom:1px solid var(--line);align-items:center}
+  tbody tr:last-child{border-bottom:0}
+  td{padding:0;border:0}
+  td:nth-child(1){grid-column:1}
+  td:nth-child(4){grid-column:2;grid-row:1;align-self:start;font-size:13px;color:var(--muted)}
+  td:nth-child(4)::before{content:"Issued ";}
+  td.rec{grid-column:1/-1;max-width:none;font-size:14px}
+  td:nth-child(3){grid-column:1}
+  td:nth-child(5){display:none}
+  td:nth-child(6){grid-column:2;justify-self:end}
+  .addr{white-space:normal;font-size:16px}
+  tbody tr.sel{box-shadow:inset 4px 0 0 var(--accent)}
+  .links a{padding:12px}
+  .pca button{min-height:40px}
+  .note{padding:0 4px}
+}
+@media (max-width:380px){h1{font-size:40px}.tile b{font-size:30px}}
+@media (prefers-reduced-motion:reduce){.hero::before{animation:none}.tile,tbody tr,#toast,aside,.scrim{transition:none}}
 </style>
 </head>
 <body>
@@ -164,14 +221,15 @@ textarea{width:100%;min-height:64px;resize:vertical}
 <div class="wrap">
 <div class="tiles" id="tiles"></div>
 
-<div class="filters">
-  <label>Town<select id="fTown"></select></label>
-  <label>Stage<select id="fStage"><option value="">Any stage</option><option value="open">Not finished yet</option><option value="done">Final passed</option></select></label>
-  <label>Permit issued<select id="fDate"><option value="">Since Jan 2025</option><option value="2026-01-01">2026 only</option><option value="2026-04-01">Since Apr 2026</option><option value="2026-07-01">Since Jul 2026</option></select></label>
-  <label>My status<select id="fMine"><option value="">All except "not a pool"</option><option value="new">Not reviewed</option><option value="pool">Confirmed pool</option><option value="contacted">Contacted</option><option value="won">Won</option><option value="no">Not a pool</option></select></label>
-  <label class="grow">Search<input type="search" id="fQ" placeholder="Street or town"></label>
-  <label class="check"><input type="checkbox" id="fAbs"> Owner lives elsewhere</label>
-  <button class="act" id="copy">Copy list as CSV</button>
+<div class="filters" id="filters">
+  <label class="grow srch">Search<input type="search" id="fQ" placeholder="Street or town"></label>
+  <button type="button" class="ftog" id="fToggle" aria-expanded="false" aria-controls="filters">Filters</button>
+  <label class="fx">Town<select id="fTown"></select></label>
+  <label class="fx">Stage<select id="fStage"><option value="">Any stage</option><option value="open">Not finished yet</option><option value="done">Final passed</option></select></label>
+  <label class="fx">Permit issued<select id="fDate"><option value="">Since Jan 2025</option><option value="2026-01-01">2026 only</option><option value="2026-04-01">Since Apr 2026</option><option value="2026-07-01">Since Jul 2026</option></select></label>
+  <label class="fx">My status<select id="fMine"><option value="">All except "not a pool"</option><option value="new">Not reviewed</option><option value="pool">Confirmed pool</option><option value="contacted">Contacted</option><option value="won">Won</option><option value="no">Not a pool</option></select></label>
+  <label class="check fx"><input type="checkbox" id="fAbs"> Owner lives elsewhere</label>
+  <button class="act fx" id="copy">Copy list as CSV</button>
 </div>
 
 <div class="main">
@@ -199,6 +257,7 @@ textarea{width:100%;min-height:64px;resize:vertical}
   <aside class="card" id="detail"><p class="empty">Pick a property in the table or on the map to see its permit, mailing address and satellite view.</p></aside>
 </div>
 </div>
+<div class="scrim" id="scrim"></div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -255,6 +314,7 @@ function stage(p){const l=p.sg==="done"?"Final passed"+(p.f?" "+fmtD(p.f).replac
 function sig(p){return p.k==="C"?'<span class="pill strong">Confirmed pool</span>':p.k==="R"?'<span class="pill strong">Pool house</span>':'<span class="pill weak">Unverified</span>'}
 function render(){
   tiles();
+  {const n=["fTown","fStage","fDate","fMine"].filter(id=>$(id).value).length+($("fAbs").checked?1:0);$("fToggle").textContent="Filters"+(n?" · "+n:"")}
   const r=filtered();
   $("count").textContent=r.length+" of "+D.length+" pools shown";
   $("rows").innerHTML=r.slice(0,limit).map(p=>'<tr data-pin="'+p.pin+'"'+(sel===p.pin?' class="sel"':'')+'><td><div class="addr">'+esc(p.a)+'</div><div class="town">'+esc(p.t)+(p.ab?' · owner mails elsewhere':'')+'</div></td><td class="rec">'+esc(p.dt)+'</td><td>'+stage(p)+'</td><td class="num">'+fmtD(p.o)+'</td><td class="num">'+short(p.v)+'</td><td><span class="chip c-'+mine(p)+'">'+MINE[mine(p)]+'</span></td></tr>').join("")||'<tr><td colspan="6" class="empty">No properties match these filters.</td></tr>';
@@ -267,6 +327,7 @@ document.querySelector("thead").addEventListener("click",e=>{const th=e.target.c
 $("rows").addEventListener("click",e=>{const tr=e.target.closest("tr[data-pin]");if(tr)pick(tr.dataset.pin)});
 ["fTown","fStage","fDate","fMine","fAbs"].forEach(id=>$(id).addEventListener("change",()=>{limit=80;render()}));
 $("fQ").addEventListener("input",()=>{limit=80;render()});
+$("fToggle").addEventListener("click",()=>{const f=$("filters"),o=f.classList.toggle("open");$("fToggle").setAttribute("aria-expanded",o)});
 
 const USE={"U":"Accessory structure (U)","R-5":"One or two family home (R-5)","R-3":"Residential (R-3)"};
 function permitCard(x,i){
@@ -283,11 +344,18 @@ $("detail").addEventListener("click",e=>{
   const txt="Records request (OPRA)\nTo: Records Custodian / Construction Office, "+p.t+", NJ\n\nI request copies of the construction permit file for Permit No. "+x[0]+", issued "+fmtD(x[2])+", at "+p.a+" (Block "+bl[1]+", Lot "+bl[2]+"). Please include the permit application, the subcode technical sections, and the inspection history. Electronic copies by email are preferred.";
   navigator.clipboard.writeText(txt).then(()=>toast("Request text copied. Paste it into the town's OPRA form."),()=>toast("Copy was blocked by the browser."));
 });
-function pick(pin){
+const mq=window.matchMedia("(max-width:1020px)");
+function openSheet(){if(!mq.matches)return;$("detail").classList.add("open");document.body.classList.add("sheet");const c=$("detail").querySelector(".close");if(c)c.focus({preventScroll:true})}
+function closeSheet(){$("detail").classList.remove("open");document.body.classList.remove("sheet")}
+$("scrim").addEventListener("click",closeSheet);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+$("detail").addEventListener("click",e=>{if(e.target.closest(".close"))closeSheet()});
+mq.addEventListener&&mq.addEventListener("change",()=>{if(!mq.matches)closeSheet()});
+function pick(pin,open){
   sel=pin;const p=D.find(x=>x.pin===pin);if(!p)return;
   const st=store[pin]||{};
   const why=[...new Set(p.p.map(x=>x[7]))].sort().map(w=>WHY[w]);
-  $("detail").innerHTML='<div class="dh"><h2>'+esc(p.a)+'</h2><div class="town">'+esc(p.t)+' · Block '+esc(p.pin.split("_")[1])+', Lot '+esc(p.pin.split("_")[2])+'</div></div><div class="db">'+
+  $("detail").innerHTML='<div class="dh"><button type="button" class="close" aria-label="Close details">&times;</button><h2>'+esc(p.a)+'</h2><div class="town">'+esc(p.t)+' · Block '+esc(p.pin.split("_")[1])+', Lot '+esc(p.pin.split("_")[2])+'</div></div><div class="db">'+
   '<div>'+stage(p)+'</div>'+
   '<div class="why">'+(p.k==="U"?"Not confirmed. "+esc(p.t)+" does not show permit descriptions online. "+why.map(esc).join(". ")+".":"<b>Town record</b>"+esc(p.dt))+'</div>'+
   '<div class="links">'+p.pl.map(l=>'<a class="primary" target="_blank" rel="noopener" href="'+l[1]+'">Open town permit '+esc(l[0])+'</a>').join("")+'<a class="primary" target="_blank" rel="noopener" href="https://www.google.com/maps/@'+p.la+','+p.ln+',90m/data=!3m1!1e3">Check the yard on satellite</a><a target="_blank" rel="noopener" href="https://njpropertyrecords.com/property/'+encodeURIComponent(p.pin)+'">Look up the owner name</a></div>'+
@@ -300,6 +368,7 @@ function pick(pin){
   $("st").addEventListener("change",e=>{store[pin]=Object.assign(store[pin]||{},{s:e.target.value});save();render()});
   $("nt").addEventListener("input",e=>{store[pin]=Object.assign(store[pin]||{},{n:e.target.value});save()});
   render();
+  if(open!==false)openSheet();
 }
 
 /* map: plain lat/lng scatter, one scale for both axes (longitude shrunk by cos(latitude)) */
@@ -318,10 +387,16 @@ function draw(r){
     cx.globalAlpha=.18;cx.fillStyle=c;cx.beginPath();cx.arc(x,y,10,0,7);cx.fill();
     cx.globalAlpha=1;cx.beginPath();cx.arc(x,y,5,0,7);cx.fill();cx.lineWidth=1.5;cx.strokeStyle=panel;cx.stroke()});
   const by={};r.forEach(p=>{(by[p.t]=by[p.t]||[]).push(p)});
-  cx.font="700 16px "+css("--display");cx.fillStyle=css("--ink");cx.textBaseline="middle";
+  cx.font="700 "+(W<520?13:16)+"px "+css("--display");cx.fillStyle=css("--ink");cx.textBaseline="middle";
   const mid=r.reduce((s,p)=>s+p.ln,0)/(r.length||1);
-  Object.entries(by).forEach(([t,a])=>{const xs=a.map(p=>X(p.ln)),my=a.reduce((s,p)=>s+Y(p.la),0)/a.length,cxm=xs.reduce((s,v)=>s+v,0)/xs.length,right=a.reduce((s,p)=>s+p.ln,0)/a.length>=mid;
-    cx.textAlign=right?"left":"right";cx.fillText((t+" · "+a.length).toUpperCase(),right?Math.max(...xs)+18:Math.min(...xs)-18,my)});
+  const placed=[];
+  Object.entries(by).sort((a,b)=>b[1].length-a[1].length).forEach(([t,a])=>{const xs=a.map(p=>X(p.ln)),lab=(t+" · "+a.length).toUpperCase(),w=cx.measureText(lab).width;
+    let my=a.reduce((s,p)=>s+Y(p.la),0)/a.length,right=a.reduce((s,p)=>s+p.ln,0)/a.length>=mid;const rx=Math.max(...xs)+14,lx=Math.min(...xs)-14;
+    if(right&&rx+w>W-8)right=false;else if(!right&&lx-w<8)right=true;
+    let x0=right?Math.min(rx,W-8-w):Math.max(lx-w,8);
+    for(let g=0;g<6&&placed.some(b=>x0<b[0]+b[2]&&x0+w>b[0]&&Math.abs(my-b[1])<18);g++)my+=18;
+    my=Math.min(Math.max(my,12),H-10);placed.push([x0,my,w]);
+    cx.textAlign="left";cx.fillText(lab,x0,my)});
   cx.textBaseline="alphabetic";
   if(sel){const p=D.find(x=>x.pin===sel);if(p&&show.has(p.pin)){cx.strokeStyle=css("--ink");cx.lineWidth=2.5;cx.beginPath();cx.arc(X(p.ln),Y(p.la),11,0,7);cx.stroke()}}
 }
@@ -336,7 +411,7 @@ $("copy").addEventListener("click",()=>{
   const txt=rows.map(a=>a.map(q).join(",")).join("\n");
   navigator.clipboard.writeText(txt).then(()=>toast(r.length+" rows copied. Paste into Excel or Sheets."),()=>toast("Copy was blocked by the browser. Try again from the page itself."));
 });
-{const f=filtered();if(f.length)pick(f[0].pin);else render()}
+{const f=filtered();if(f.length&&!mq.matches)pick(f[0].pin,false);else render()}
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>draw(filtered()));
 </script>
 </body>
