@@ -5,106 +5,163 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monmouth Pool Permit Leads</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* layout: summary strip, then filters, then map + lead table side by side, detail panel on the right */
+/* layout: a pool seen from above. Tiled water hero, depth-marker stat tiles on the coping edge, then deck: filters, map + lead list, detail panel on the right */
 :root{
-  --bg:#f1f5f6; --panel:#ffffff; --ink:#0f252c; --muted:#5b7078; --line:#d5dfe2;
-  --accent:#0a6c78; --accent-ink:#ffffff; --build:#b06200; --done:#1c7a4c; --weak:#8a98a0;
-  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --bg:#edf2f3; --panel:#ffffff; --ink:#0b2836; --muted:#56707c; --line:#d3dee2;
+  --accent:#0b78a0; --accent-ink:#ffffff; --build:#d97f00; --done:#178f62; --weak:#8a9aa2;
+  --water-a:#073f5e; --water-b:#0b78a0; --water-c:#22b3c4; --on-water:#f2fbfd; --soft:#e3f1f5;
+  --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif; --body:"Barlow","Segoe UI",system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(11,40,54,.06),0 8px 24px -12px rgba(11,40,54,.18);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0c1a1f; --panel:#13262d; --ink:#e4eef0; --muted:#8fa6ad; --line:#24404a;
-    --accent:#3fb9c6; --accent-ink:#06262b; --build:#f0a23c; --done:#4cc98a; --weak:#6f858d; color-scheme:dark;
+    --bg:#081820; --panel:#0f2630; --ink:#e6f1f4; --muted:#8ba6b0; --line:#1f3d49;
+    --accent:#35b4d6; --accent-ink:#04222c; --build:#f2a63a; --done:#46c890; --weak:#6f8891; --soft:#143440;
+    --water-a:#052c42; --water-b:#085d7e; --water-c:#1593a6;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0c1a1f; --panel:#13262d; --ink:#e4eef0; --muted:#8fa6ad; --line:#24404a;
-  --accent:#3fb9c6; --accent-ink:#06262b; --build:#f0a23c; --done:#4cc98a; --weak:#6f858d; color-scheme:dark;
+  --bg:#081820; --panel:#0f2630; --ink:#e6f1f4; --muted:#8ba6b0; --line:#1f3d49;
+  --accent:#35b4d6; --accent-ink:#04222c; --build:#f2a63a; --done:#46c890; --weak:#6f8891; --soft:#143440;
+  --water-a:#052c42; --water-b:#085d7e; --water-c:#1593a6;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6); color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);padding:20px 20px 40px}
-.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-header{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:flex-end;justify-content:space-between}
-h1{font:800 28px/1.1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
-.sub{color:var(--muted);max-width:68ch;margin:6px 0 0}
-.src{color:var(--muted);font-size:13px;text-align:right}
-.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;font:inherit;color:inherit;cursor:pointer}
-.tile:hover,.tile.on{border-color:var(--accent)}
-.tile.on{box-shadow:inset 0 0 0 1px var(--accent)}
-.tile b{display:block;font:800 26px/1 var(--display);font-variant-numeric:tabular-nums}
-.tile span{color:var(--muted);font-size:13px}
-.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.filters label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500}
-select,input[type=search],textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:7px 9px;min-width:0}
-input[type=search]{width:210px}
-.check{flex-direction:row!important;align-items:center;gap:6px!important;font-size:14px!important;color:var(--ink)!important;padding-bottom:7px}
-button.act{font:600 14px var(--body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:7px;padding:9px 14px;cursor:pointer;margin-left:auto}
-button.act:hover{filter:brightness(1.08)}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);padding-bottom:48px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
-.left{display:flex;flex-direction:column;gap:16px;min-width:0}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
-.maphead{display:flex;justify-content:space-between;gap:12px;padding:10px 14px 0;font-size:13px;color:var(--muted);flex-wrap:wrap}
-.legend{display:flex;gap:14px;flex-wrap:wrap}
-.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:baseline}
-canvas{display:block;width:100%;height:330px;cursor:crosshair}
+
+/* water */
+.hero{position:relative;overflow:hidden;color:var(--on-water);background:linear-gradient(155deg,var(--water-a),var(--water-b) 58%,var(--water-c));padding:34px 24px 84px}
+.hero::before{content:"";position:absolute;inset:-20%;background:
+  radial-gradient(38% 30% at 22% 30%,rgba(255,255,255,.16),transparent 70%),
+  radial-gradient(30% 26% at 72% 62%,rgba(255,255,255,.12),transparent 70%),
+  radial-gradient(24% 20% at 52% 12%,rgba(255,255,255,.10),transparent 70%);
+  animation:drift 16s ease-in-out infinite alternate}
+.hero::after{content:"";position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,rgba(255,255,255,.09) 0 1px,transparent 1px 38px),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.09) 0 1px,transparent 1px 38px)}
+@keyframes drift{from{transform:translate3d(-3%,-2%,0)}to{transform:translate3d(4%,3%,0)}}
+.hero-in{position:relative;z-index:1;max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px 40px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font:700 14px var(--display);letter-spacing:.16em;text-transform:uppercase;margin:0 0 6px;opacity:.85}
+h1{font:800 clamp(44px,7vw,84px)/.9 var(--display);text-transform:uppercase;letter-spacing:.005em;margin:0;text-wrap:balance}
+.sub{max-width:56ch;margin:14px 0 0;font-size:16px;opacity:.92}
+.src{font-size:13px;opacity:.8;text-align:right;line-height:1.5}
+.coping{height:10px;background:linear-gradient(var(--panel),var(--line));border-bottom:1px solid var(--line)}
+
+.wrap{max-width:1320px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:18px}
+/* depth-marker tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:-62px;position:relative;z-index:2}
+.tile{background:var(--panel);border:2px solid var(--ink);border-radius:6px;padding:12px 16px 14px;text-align:left;font:inherit;color:inherit;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:baseline;gap:12px;transition:transform .15s}
+.tile:hover{transform:translateY(-2px)}
+.tile b{font:800 52px/.9 var(--display);font-variant-numeric:tabular-nums}
+.tile span{font:700 15px/1.15 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tile.on{background:var(--ink);color:var(--panel)}
+.tile.on span{color:inherit;opacity:.8}
+
+.filters{display:flex;flex-wrap:wrap;gap:12px 12px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.filters label{display:flex;flex-direction:column;gap:5px;font:700 12px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+select,input[type=search],textarea{font:500 14px var(--body);letter-spacing:0;text-transform:none;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+select:hover,input[type=search]:hover{border-color:var(--accent)}
+input[type=search]{width:100%}
+.filters label.grow{flex:1 1 150px}
+.check{flex-direction:row!important;align-items:center;gap:7px!important;padding-bottom:9px;color:var(--ink)!important}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+button.act{font:700 15px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:10px 16px;cursor:pointer;margin-left:auto}
+button.act:hover{filter:brightness(1.1)}
+
+.main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
+.left{display:flex;flex-direction:column;gap:18px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.maphead{display:flex;justify-content:space-between;gap:12px;padding:12px 16px 0;font-size:13px;color:var(--muted);flex-wrap:wrap}
+#count{font:700 15px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+canvas{display:block;width:100%;height:300px;cursor:pointer}
 .tablewrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px}
-th{position:sticky;top:0;background:var(--panel);text-align:left;font:600 12px var(--body);color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
-th[aria-sort]{color:var(--ink)}
-td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-tbody tr{cursor:pointer}
-tbody tr:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
-tbody tr.sel{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+th{text-align:left;font:700 13px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 14px;border-bottom:2px solid var(--ink);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--ink)}
+th[aria-sort]{color:var(--accent)}
+th[aria-sort="ascending"]::after{content:" \2191"} th[aria-sort="descending"]::after{content:" \2193"}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .12s}
+tbody tr:hover{background:var(--soft)}
+tbody tr.sel{background:var(--soft);box-shadow:inset 4px 0 0 var(--accent)}
+tbody tr:last-child td{border-bottom:0}
 .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.addr{font-weight:600}
+.addr{font-weight:600;font-size:15px;white-space:nowrap}
 .town{color:var(--muted);font-size:13px}
-.pill{display:inline-block;font:600 12px var(--body);border-radius:99px;padding:2px 9px;white-space:nowrap;border:1px solid currentColor}
-.pill.build{color:var(--build)} .pill.done{color:var(--done)} .pill.strong{color:var(--accent)} .pill.weak{color:var(--weak)}
-.tag{font-size:12px;color:var(--muted)}
+.tag{font-size:13px;color:var(--muted)}
+td.rec{font-size:13px;color:var(--muted);max-width:220px}
+/* stage as a three-segment lane line: approved, building, final */
+.stage{display:inline-flex;flex-direction:column;gap:5px;white-space:nowrap}
+.lane{display:inline-flex;gap:3px}
+.lane i{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.s-pre .lane i:nth-child(1),.s-build .lane i:nth-child(-n+2){background:var(--build)}
+.s-done .lane i{background:var(--done)}
+.stage em{font:600 13px var(--body);font-style:normal}
+.s-pre em,.s-build em{color:var(--build)} .s-done em{color:var(--done)}
+.chip{display:inline-block;font:600 12px var(--body);border-radius:99px;padding:3px 10px;background:var(--bg);color:var(--muted);white-space:nowrap}
+.chip.c-contacted,.chip.c-pool{background:var(--soft);color:var(--accent)}
+.chip.c-won{background:var(--done);color:var(--panel)}
 .more{padding:12px;text-align:center}
-.more button{font:600 14px var(--body);background:none;border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:8px 14px;cursor:pointer}
-aside{position:sticky;top:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
-aside h2{font:700 20px/1.2 var(--display);margin:0}
-aside dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0;font-size:14px}
+.more button{font:600 14px var(--body);background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
+
+aside{position:sticky;top:16px;overflow:hidden;display:flex;flex-direction:column}
+.dh{padding:18px 18px 16px;color:var(--on-water);background:linear-gradient(155deg,var(--water-a),var(--water-b));position:relative}
+.dh::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 1px,transparent 1px 26px),repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,transparent 1px 26px)}
+.dh>*{position:relative;z-index:1}
+.dh h2{font:800 32px/1 var(--display);text-transform:uppercase;margin:0 0 4px;text-wrap:balance}
+.dh .town{color:inherit;opacity:.85}
+.db{padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px}
+.db .stage{flex-direction:row;align-items:center;gap:10px}
+.db .lane i{width:34px;height:8px;border-radius:4px}
+.db .stage em{font-size:15px}
+.why{font-size:14px;border-left:3px solid var(--water-c);padding:2px 0 2px 12px}
+.why b{display:block;font:700 12px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+aside dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:14px}
 aside dt{color:var(--muted)} aside dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
 .links{display:flex;flex-direction:column;gap:8px}
-.links a{display:block;text-align:center;font-weight:600;text-decoration:none;border:1px solid var(--accent);color:var(--accent);border-radius:7px;padding:8px}
+.links a{display:block;text-align:center;font:700 15px var(--display);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;border:1.5px solid var(--accent);color:var(--accent);border-radius:8px;padding:9px}
+.links a:hover{background:var(--soft)}
 .links a.primary{background:var(--accent);color:var(--accent-ink)}
-.permits{font-size:13px;border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:6px}
-.pc{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px}
-.pch{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.links a.primary:hover{filter:brightness(1.1);background:var(--accent)}
+.permits{display:flex;flex-direction:column;gap:8px}
+.pc{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.pch{display:flex;justify-content:space-between;gap:10px;font:700 17px var(--display);letter-spacing:.04em;text-transform:uppercase}
 .pc dl{font-size:13px}
 .pca{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .pca a{color:var(--muted);font-size:12px}
-.pca button{font:600 13px var(--body);background:none;border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:5px 10px;cursor:pointer}
-.why{font-size:13px;color:var(--muted)}
-.why b{color:var(--ink)}
-textarea{width:100%;min-height:60px;resize:vertical}
-.empty{color:var(--muted)}
-.note{font-size:13px;color:var(--muted);max-width:90ch}
+.pca button{font:600 13px var(--body);background:var(--panel);border:1px solid var(--accent);color:var(--accent);border-radius:7px;padding:6px 10px;cursor:pointer}
+.fld{display:flex;flex-direction:column;gap:5px;font:700 12px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+textarea{width:100%;min-height:64px;resize:vertical}
+.empty{color:var(--muted);padding:18px}
+.note{font-size:13px;color:var(--muted);max-width:92ch;margin:0}
 .note b{color:var(--ink)}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
 #toast.show{opacity:1}
-@media (max-width:980px){.main{grid-template-columns:1fr}aside{position:static}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:480px){body{padding:16px}button.act{margin-left:0;width:100%}input[type=search]{width:100%}}
-@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+@media (max-width:1020px){.main{grid-template-columns:1fr}aside{position:static}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.src{text-align:left}}
+@media (max-width:520px){.hero{padding:26px 16px 80px}.wrap{padding:0 16px}.tile{flex-direction:column;gap:4px}.tile b{font-size:40px}button.act{margin-left:0;width:100%}input[type=search]{width:100%}.filters label{flex:1 1 44%}}
+@media (prefers-reduced-motion:reduce){.hero::before{animation:none}.tile,tbody tr,#toast{transition:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <div>
-    <h1>Monmouth Pool Permit Leads</h1>
-    <p class="sub">Monmouth County homes with a pool permit issued since January 2025, confirmed against each town's own permit record. Reach them while the pool is being built, before anyone else has the maintenance contract.</p>
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <p class="eyebrow">Monmouth County, NJ · permits since January 2025</p>
+      <h1>Pool Permit Leads</h1>
+      <p class="sub">Homes with an in-ground pool permit, confirmed in the town's own records. Reach them while the pool is being built, before anyone else has the maintenance contract.</p>
+    </div>
+    <div class="src">State permit feed through Oct 6, 2026<br>Town records checked Nov 17, 2026<br>Wall · Marlboro · Asbury Park</div>
   </div>
-  <div class="src">Permits: NJ DCA feed on data.nj.gov, through Oct 6, 2026<br>Pool confirmation: town permit portals, checked Nov 17, 2026<br>Addresses and values: NJ statewide parcel records</div>
 </header>
-
+<div class="coping"></div>
+<div class="wrap">
 <div class="tiles" id="tiles"></div>
 
 <div class="filters">
@@ -112,7 +169,7 @@ textarea{width:100%;min-height:60px;resize:vertical}
   <label>Stage<select id="fStage"><option value="">Any stage</option><option value="open">Not finished yet</option><option value="done">Final passed</option></select></label>
   <label>Permit issued<select id="fDate"><option value="">Since Jan 2025</option><option value="2026-01-01">2026 only</option><option value="2026-04-01">Since Apr 2026</option><option value="2026-07-01">Since Jul 2026</option></select></label>
   <label>My status<select id="fMine"><option value="">All except "not a pool"</option><option value="new">Not reviewed</option><option value="pool">Confirmed pool</option><option value="contacted">Contacted</option><option value="won">Won</option><option value="no">Not a pool</option></select></label>
-  <label>Search<input type="search" id="fQ" placeholder="Street or town"></label>
+  <label class="grow">Search<input type="search" id="fQ" placeholder="Street or town"></label>
   <label class="check"><input type="checkbox" id="fAbs"> Owner lives elsewhere</label>
   <button class="act" id="copy">Copy list as CSV</button>
 </div>
@@ -122,15 +179,15 @@ textarea{width:100%;min-height:60px;resize:vertical}
     <div class="card">
       <div class="maphead">
         <span id="count"></span>
-        <span class="legend"><span><i class="dot" style="background:var(--build)"></i>Under construction</span><span><i class="dot" style="background:var(--done)"></i>Final passed</span></span>
+        <span class="legend"><span><i class="dot" style="background:var(--build)"></i>Not finished yet</span><span><i class="dot" style="background:var(--done)"></i>Final passed</span></span>
       </div>
-      <canvas id="map" aria-label="Map of leads across Monmouth County"></canvas>
+      <canvas id="map" aria-label="Map of confirmed pool permits"></canvas>
     </div>
     <div class="card tablewrap">
       <table>
         <thead><tr>
           <th data-k="a">Property</th><th data-k="dt">Town record</th><th data-k="f">Stage</th>
-          <th data-k="o" class="num">Permit</th><th data-k="c" class="num">Job cost</th><th data-k="v" class="num">Home value</th><th data-k="mine">My status</th>
+          <th data-k="o" class="num">Permit</th><th data-k="v" class="num">Home value</th><th data-k="mine">My status</th>
         </tr></thead>
         <tbody id="rows"></tbody>
       </table>
@@ -139,7 +196,7 @@ textarea{width:100%;min-height:60px;resize:vertical}
     <p class="note"><b>How to read this.</b> Every property here has an in-ground pool permit confirmed in the town's own permit record, which is where the pool description comes from. Coverage is Wall, Marlboro and Asbury Park, the towns whose records could be checked online. Other Monmouth towns are not included because their permit descriptions are not public online. Town permit links need a free SDL Portal login. Owner names are withheld from the state parcel file, so mail goes to the mailing address on record. Stage and dates are as of November 17, 2026.</p>
   </div>
 
-  <aside class="card" id="detail"><p class="empty">Pick a property in the table or on the map to see its permits, mailing address and satellite view.</p></aside>
+  <aside class="card" id="detail"><p class="empty">Pick a property in the table or on the map to see its permit, mailing address and satellite view.</p></aside>
 </div>
 </div>
 <div id="toast" role="status"></div>
@@ -194,13 +251,13 @@ function filtered(){
   r.sort((x,y)=>{const a=key(x),b=key(y);return(a<b?-1:a>b?1:0)*sortDir||(x.o<y.o?1:-1)});
   return r;
 }
-function stage(p){return p.sg==="done"?'<span class="pill done">Final passed'+(p.f?' '+fmtD(p.f).replace(/ \d+,/,""):'')+'</span>':p.sg==="pre"?'<span class="pill build">Approved, not started</span>':'<span class="pill build">Under construction</span>'}
+function stage(p){const l=p.sg==="done"?"Final passed"+(p.f?" "+fmtD(p.f).replace(/ \d+,/,""):""):p.sg==="pre"?"Approved, not started":"Under construction";return '<span class="stage s-'+p.sg+'"><span class="lane"><i></i><i></i><i></i></span><em>'+l+'</em></span>'}
 function sig(p){return p.k==="C"?'<span class="pill strong">Confirmed pool</span>':p.k==="R"?'<span class="pill strong">Pool house</span>':'<span class="pill weak">Unverified</span>'}
 function render(){
   tiles();
   const r=filtered();
-  $("count").textContent=r.length+" of "+D.length+" properties shown";
-  $("rows").innerHTML=r.slice(0,limit).map(p=>'<tr data-pin="'+p.pin+'"'+(sel===p.pin?' class="sel"':'')+'><td><div class="addr">'+esc(p.a)+'</div><div class="town">'+esc(p.t)+(p.ab?' · owner mails elsewhere':'')+'</div></td><td class="tag">'+esc(p.dt)+'</td><td>'+stage(p)+'</td><td class="num">'+fmtD(p.o)+'</td><td class="num">'+money(p.c)+'</td><td class="num">'+short(p.v)+'</td><td class="tag">'+MINE[mine(p)]+'</td></tr>').join("")||'<tr><td colspan="7" class="empty">No properties match these filters.</td></tr>';
+  $("count").textContent=r.length+" of "+D.length+" pools shown";
+  $("rows").innerHTML=r.slice(0,limit).map(p=>'<tr data-pin="'+p.pin+'"'+(sel===p.pin?' class="sel"':'')+'><td><div class="addr">'+esc(p.a)+'</div><div class="town">'+esc(p.t)+(p.ab?' · owner mails elsewhere':'')+'</div></td><td class="rec">'+esc(p.dt)+'</td><td>'+stage(p)+'</td><td class="num">'+fmtD(p.o)+'</td><td class="num">'+short(p.v)+'</td><td><span class="chip c-'+mine(p)+'">'+MINE[mine(p)]+'</span></td></tr>').join("")||'<tr><td colspan="6" class="empty">No properties match these filters.</td></tr>';
   $("more").innerHTML=r.length>limit?'<button id="moreBtn">Show '+Math.min(80,r.length-limit)+' more</button>':"";
   document.querySelectorAll("th").forEach(th=>{if(th.dataset.k===sortK)th.setAttribute("aria-sort",sortDir>0?"ascending":"descending");else th.removeAttribute("aria-sort")});
   draw(r);
@@ -230,16 +287,16 @@ function pick(pin){
   sel=pin;const p=D.find(x=>x.pin===pin);if(!p)return;
   const st=store[pin]||{};
   const why=[...new Set(p.p.map(x=>x[7]))].sort().map(w=>WHY[w]);
-  $("detail").innerHTML='<div><h2>'+esc(p.a)+'</h2><div class="town">'+esc(p.t)+' · Block '+esc(p.pin.split("_")[1])+', Lot '+esc(p.pin.split("_")[2])+'</div></div>'+
-  '<div>'+stage(p)+' '+sig(p)+'</div>'+
-  '<div class="why">'+(p.k==="U"?"Not confirmed. "+esc(p.t)+" does not show permit descriptions online. "+why.map(esc).join(". ")+".":"<b>Town record:</b> "+esc(p.dt))+'</div>'+
+  $("detail").innerHTML='<div class="dh"><h2>'+esc(p.a)+'</h2><div class="town">'+esc(p.t)+' · Block '+esc(p.pin.split("_")[1])+', Lot '+esc(p.pin.split("_")[2])+'</div></div><div class="db">'+
+  '<div>'+stage(p)+'</div>'+
+  '<div class="why">'+(p.k==="U"?"Not confirmed. "+esc(p.t)+" does not show permit descriptions online. "+why.map(esc).join(". ")+".":"<b>Town record</b>"+esc(p.dt))+'</div>'+
   '<div class="links">'+p.pl.map(l=>'<a class="primary" target="_blank" rel="noopener" href="'+l[1]+'">Open town permit '+esc(l[0])+'</a>').join("")+'<a class="primary" target="_blank" rel="noopener" href="https://www.google.com/maps/@'+p.la+','+p.ln+',90m/data=!3m1!1e3">Check the yard on satellite</a><a target="_blank" rel="noopener" href="https://njpropertyrecords.com/property/'+encodeURIComponent(p.pin)+'">Look up the owner name</a></div>'+
   '<dl><dt>Mail to</dt><dd>'+esc(p.ma)+'<br>'+esc(p.mc)+' '+esc(p.mz)+'</dd>'+
   (p.ab?'<dt>Note</dt><dd>Owner mails elsewhere, likely a second home</dd>':'')+
   '<dt>Assessed value</dt><dd>'+money(p.v)+'</dd><dt>Last sale</dt><dd>'+(p.s>1000?money(p.s)+(p.d?", "+fmtD(p.d):""):(p.d?fmtD(p.d)+", price not recorded":"n/a"))+'</dd><dt>Year built</dt><dd>'+(p.y||"n/a")+'</dd></dl>'+
   '<div class="permits">'+p.p.map((x,i)=>permitCard(x,i)).join("")+'</div>'+
-  '<label class="tag" for="st">My status<br><select id="st" style="width:100%;margin-top:4px">'+Object.entries(MINE).map(([k,v])=>'<option value="'+k+'"'+(mine(p)===k?" selected":"")+'>'+v+'</option>').join("")+'</select></label>'+
-  '<label class="tag" for="nt">Notes<br><textarea id="nt" style="margin-top:4px" placeholder="Saved in this browser only">'+esc(st.n||"")+'</textarea></label>';
+  '<label class="fld" for="st">My status<select id="st">'+Object.entries(MINE).map(([k,v])=>'<option value="'+k+'"'+(mine(p)===k?" selected":"")+'>'+v+'</option>').join("")+'</select></label>'+
+  '<label class="fld" for="nt">Notes<textarea id="nt" placeholder="Saved in this browser only">'+esc(st.n||"")+'</textarea></label></div>';
   $("st").addEventListener("change",e=>{store[pin]=Object.assign(store[pin]||{},{s:e.target.value});save();render()});
   $("nt").addEventListener("input",e=>{store[pin]=Object.assign(store[pin]||{},{n:e.target.value});save()});
   render();
@@ -248,20 +305,25 @@ function pick(pin){
 /* map: plain lat/lng scatter, one scale for both axes (longitude shrunk by cos(latitude)) */
 const cv=$("map"),cx=cv.getContext("2d");let pts=[];
 function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+const B=(()=>{const la=D.map(p=>p.la),ln=D.map(p=>p.ln);const a=[Math.min(...la),Math.max(...la),Math.min(...ln),Math.max(...ln)];const py=(a[1]-a[0])*.14||.02,px=(a[3]-a[2])*.08||.02;return[a[0]-py,a[1]+py,a[2]-px,a[3]+px]})();
 function draw(r){
   const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,W,H);
-  const k=Math.cos(40.25*Math.PI/180),la0=40.08,la1=40.45,ln0=-74.62,ln1=-73.96;
-  const sc=Math.min((W-40)/((ln1-ln0)*k),(H-30)/(la1-la0)),ox=(W-(ln1-ln0)*k*sc)/2,oy=(H-(la1-la0)*sc)/2;
+  const k=Math.cos(40.25*Math.PI/180),[la0,la1,ln0,ln1]=B;
+  const sc=Math.min((W-48)/((ln1-ln0)*k),(H-36)/(la1-la0)),ox=(W-(ln1-ln0)*k*sc)/2,oy=(H-(la1-la0)*sc)/2;
   const X=ln=>ox+(ln-ln0)*k*sc,Y=la=>H-oy-(la-la0)*sc;
-  const show=new Set(r.map(p=>p.pin));
-  cx.globalAlpha=.25;cx.fillStyle=css("--line");D.forEach(p=>{if(!show.has(p.pin)){cx.beginPath();cx.arc(X(p.ln),Y(p.la),2,0,7);cx.fill()}});
-  cx.globalAlpha=.85;pts=[];
-  r.forEach(p=>{const x=X(p.ln),y=Y(p.la);pts.push([x,y,p.pin]);cx.fillStyle=p.k==="U"?css("--weak"):p.sg==="done"?css("--done"):css("--build");cx.beginPath();cx.arc(x,y,3.2,0,7);cx.fill()});
-  cx.globalAlpha=1;
+  const show=new Set(r.map(p=>p.pin)),panel=css("--panel");
+  cx.fillStyle=css("--line");D.forEach(p=>{if(!show.has(p.pin)){cx.beginPath();cx.arc(X(p.ln),Y(p.la),3,0,7);cx.fill()}});
+  pts=[];
+  r.forEach(p=>{const x=X(p.ln),y=Y(p.la),c=p.sg==="done"?css("--done"):css("--build");pts.push([x,y,p.pin]);
+    cx.globalAlpha=.18;cx.fillStyle=c;cx.beginPath();cx.arc(x,y,10,0,7);cx.fill();
+    cx.globalAlpha=1;cx.beginPath();cx.arc(x,y,5,0,7);cx.fill();cx.lineWidth=1.5;cx.strokeStyle=panel;cx.stroke()});
   const by={};r.forEach(p=>{(by[p.t]=by[p.t]||[]).push(p)});
-  cx.font="600 11px "+css("--body");cx.fillStyle=css("--ink");cx.textAlign="center";
-  Object.entries(by).filter(([,a])=>a.length>=8).forEach(([t,a])=>{const mx=a.reduce((s,p)=>s+p.ln,0)/a.length,my=Math.max(...a.map(p=>p.la));cx.fillText(t+" ("+a.length+")",Math.min(W-60,Math.max(60,X(mx))),Math.max(12,Y(my)-8))});
-  if(sel){const p=D.find(x=>x.pin===sel);if(p){cx.strokeStyle=css("--ink");cx.lineWidth=2;cx.beginPath();cx.arc(X(p.ln),Y(p.la),7,0,7);cx.stroke()}}
+  cx.font="700 16px "+css("--display");cx.fillStyle=css("--ink");cx.textBaseline="middle";
+  const mid=r.reduce((s,p)=>s+p.ln,0)/(r.length||1);
+  Object.entries(by).forEach(([t,a])=>{const xs=a.map(p=>X(p.ln)),my=a.reduce((s,p)=>s+Y(p.la),0)/a.length,cxm=xs.reduce((s,v)=>s+v,0)/xs.length,right=a.reduce((s,p)=>s+p.ln,0)/a.length>=mid;
+    cx.textAlign=right?"left":"right";cx.fillText((t+" · "+a.length).toUpperCase(),right?Math.max(...xs)+18:Math.min(...xs)-18,my)});
+  cx.textBaseline="alphabetic";
+  if(sel){const p=D.find(x=>x.pin===sel);if(p&&show.has(p.pin)){cx.strokeStyle=css("--ink");cx.lineWidth=2.5;cx.beginPath();cx.arc(X(p.ln),Y(p.la),11,0,7);cx.stroke()}}
 }
 cv.addEventListener("click",e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;let best=null,bd=400;pts.forEach(q=>{const d=(q[0]-x)**2+(q[1]-y)**2;if(d<bd){bd=d;best=q[2]}});if(best)pick(best)});
 window.addEventListener("resize",()=>draw(filtered()));
@@ -274,7 +336,8 @@ $("copy").addEventListener("click",()=>{
   const txt=rows.map(a=>a.map(q).join(",")).join("\n");
   navigator.clipboard.writeText(txt).then(()=>toast(r.length+" rows copied. Paste into Excel or Sheets."),()=>toast("Copy was blocked by the browser. Try again from the page itself."));
 });
-render();
+{const f=filtered();if(f.length)pick(f[0].pin);else render()}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>draw(filtered()));
 </script>
 </body>
 </html>
